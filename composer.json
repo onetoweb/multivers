@@ -1,13 +1,15 @@
 {
-    "name": "onetoweb/unit4",
-    "description": "Unit4 API Client",
+    "name": "onetoweb/multivers",
+    "description": "Multivers API Client",
     "keywords": [
         "api",
         "php",
-        "unit4"
+        "unit4",
+        "multivers",
+        "boekhoudgemak"
     ],
     "type": "library",
-    "homepage": "https://github.com/onetoweb/unit4",
+    "homepage": "https://github.com/onetoweb/multivers",
     "authors": [
         {
             "name": "Jonathan van 't Ende",
@@ -16,7 +18,7 @@
     ],
     "require": {
         "php": ">=7.1.0",
-        "guzzlehttp/guzzle": ">=7.0.0"
+        "guzzlehttp/guzzle" : "^6.0 || ^7.0"
     },
     "require-dev": {
         "symfony/error-handler": "^5.1"

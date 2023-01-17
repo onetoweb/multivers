@@ -1,9 +1,9 @@
-# Unit4 API Client
+# Multivers API Client
 
 ## Installing
 
 ```bash
-composer require onetoweb/unit4
+composer require onetoweb/multivers
 ```
 
 ## Usage
