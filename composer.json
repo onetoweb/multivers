@@ -23,7 +23,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Onetoweb\\Unit4\\": "src/"
+            "Onetoweb\\Multivers\\": "src/"
         }
     }
 }
