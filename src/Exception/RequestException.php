@@ -1,6 +1,6 @@
 <?php
 
-namespace Onetoweb\Unit4\Exception;
+namespace Onetoweb\Multivers\Exception;
 
 use Exception;
 

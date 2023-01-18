@@ -5,7 +5,7 @@ namespace Onetoweb\Multivers;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
-use Onetoweb\Multivers\Exception\{RequestException};
+use Onetoweb\Multivers\Exception\RequestException;
 use Onetoweb\Multivers\{Token, ClientInterface};
 use DateTime;
 
