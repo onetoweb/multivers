@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
 use Onetoweb\Multivers\Exception\RequestException;
 use Onetoweb\Multivers\{Token, ClientInterface};
 use DateTime;
+use Closure;
 
 /**
  * Multivers Api Abstract Client.
@@ -15,69 +16,53 @@ use DateTime;
  * @author Jonathan van 't Ende <jvantende@onetoweb.nl>
  * @copyright Onetoweb. B.V.
  * 
- * @link https://api.multivers.nl/V22/Help
+ * @link https://api.multivers.nl/V21/Help
  */
 abstract class AbstractClient implements ClientInterface
 {
-    const METHOD_GET = 'GET';
-    const METHOD_POST = 'POST';
-    const METHOD_PUT = 'PUT';
-    const METHOD_DELETE = 'DELETE';
-    
     /**
-     * @var string
+     * Version
      */
-    private $clientId;
-    
-    /**
-     * @var string
-     */
-    private $clientSecret;
-    
-    /**
-     * @var string
-     */
-    private $redirectUrl;
+    public const VERSION = 21;
     
     /**
      * @var Token
      */
-    private $token;
+    private ?Token $token = null;
     
     /**
      * @var callable
      */
-    private $updateTokenCallback;
-    
-    /**
-     * @var bool
-     */
-    protected $sandbox;
-    
-    /**
-     * @var int
-     */
-    protected $version;
+    private ?Closure $updateTokenCallback = null;
     
     /**
      * @var string
      */
-    protected $database;
+    protected ?string $database = null;
     
     /**
      * @param string $clientId
      * @param string $clientSecret
      * @param string $redirectUrl
-     * @param int $version
+     * @param int $version = self::VERSION
      * @param bool $sandbox = false
      */
-    public function __construct(string $clientId, string $clientSecret, string $redirectUrl, int $version = 21, bool $sandbox = false)
-    {
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
-        $this->redirectUrl = $redirectUrl;
-        $this->version = $version;
-        $this->sandbox = $sandbox;
+    public function __construct(
+        
+        #[\SensitiveParameter]
+        private string $clientId,
+        
+        #[\SensitiveParameter]
+        private string $clientSecret,
+        
+        #[\SensitiveParameter]
+        private string $redirectUrl,
+        
+        protected int $version = self::VERSION,
+        
+        protected bool $sandbox = false
+    ) {
+        
     }
     
     /**
@@ -152,9 +137,9 @@ abstract class AbstractClient implements ClientInterface
     }
     
     /**
-     * @param callable $updateTokenCallback
+     * @param Closure $updateTokenCallback
      */
-    public function setUpdateTokenCallback(callable $updateTokenCallback): void
+    public function setUpdateTokenCallback(Closure $updateTokenCallback): void
     {
         $this->updateTokenCallback = $updateTokenCallback;
     }
@@ -204,7 +189,7 @@ abstract class AbstractClient implements ClientInterface
      */
     public function get(string $endpoint, array $query = [], bool $decode = true)
     {
-        return $this->request(self::METHOD_GET, $endpoint, [], $query, true, $decode);
+        return $this->request(Method::GET, $endpoint, [], $query, true, $decode);
     }
     
     /**
@@ -217,7 +202,7 @@ abstract class AbstractClient implements ClientInterface
      */
     public function post(string $endpoint, array $data = [], array $query = [], bool $json = true): ?array
     {
-        return $this->request(self::METHOD_POST, $endpoint, $data, $query, $json);
+        return $this->request(Method::POST, $endpoint, $data, $query, $json);
     }
     
     /**
@@ -230,7 +215,7 @@ abstract class AbstractClient implements ClientInterface
      */
     public function put(string $endpoint, array $data = [], array $query = [], bool $json = true): ?array
     {
-        return $this->request(self::METHOD_PUT, $endpoint, $data, $query, $json);
+        return $this->request(Method::PUT, $endpoint, $data, $query, $json);
     }
     
     /**
@@ -241,11 +226,11 @@ abstract class AbstractClient implements ClientInterface
      */
     public function delete(string $endpoint, array $query = []): ?array
     {
-        return $this->request(self::METHOD_DELETE, $endpoint, [], $query);
+        return $this->request(Method::DELETE, $endpoint, [], $query);
     }
     
     /**
-     * @param string $method
+     * @param Method $method
      * @param string $endpoint
      * @param array $data = []
      * @param array $query = []
@@ -255,7 +240,7 @@ abstract class AbstractClient implements ClientInterface
      * 
      * @return mixed
      */
-    public function request(string $method, string $endpoint, array $data = [], array $query = [], bool $json = true, bool $decode = true)
+    public function request(Method $method, string $endpoint, array $data = [], array $query = [], bool $json = true, bool $decode = true)
     {
         // build request haders
         $headers = [
@@ -283,7 +268,7 @@ abstract class AbstractClient implements ClientInterface
             $options[RequestOptions::HEADERS] = $headers;
             
             // add post data body
-            if (in_array($method, [self::METHOD_POST, self::METHOD_PUT])) {
+            if (in_array($method, [Method::POST, Method::PUT])) {
                 
                 if ($json) {
                     $options[RequestOptions::JSON] = $data;
@@ -305,7 +290,7 @@ abstract class AbstractClient implements ClientInterface
             ]);
             
             // build guzzle request
-            $result = $guzzleClient->request($method, $this->getBaseUri() . $endpoint, $options);
+            $result = $guzzleClient->request($method->value, $this->getBaseUri() . $endpoint, $options);
             
             // get contents
             $contents = $result->getBody()->getContents();

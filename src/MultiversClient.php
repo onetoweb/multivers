@@ -17,7 +17,7 @@ class MultiversClient extends AbstractClient
     /**
      * Base Uri.
      */
-    const BASE_URI = 'https://%sapi.multivers.nl/V%d';
+    public const BASE_URI = 'https://%sapi.multivers.nl/V%d';
     
     /**
      * {@inheritdoc}

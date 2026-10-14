@@ -17,7 +17,7 @@ class BoekhoudgemakClient extends AbstractClient
     /**
      * Base Uri.
      */
-    const BASE_URI = 'https://%sapi.boekhoudgemak.nl/V%d';
+    public const BASE_URI = 'https://%sapi.boekhoudgemak.nl/V%d';
     
     /**
      * {@inheritdoc}
